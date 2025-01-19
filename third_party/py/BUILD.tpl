@@ -5,7 +5,6 @@ package(default_visibility = ["//visibility:public"])
 # Point both runtimes to the same python binary to ensure we always
 # use the python binary specified by ./configure.py script.
 load("@bazel_tools//tools/python:toolchain.bzl", "py_runtime_pair")
-load("@python//:defs.bzl", "interpreter")
 
 py_runtime(
     name = "py2_runtime",
@@ -33,8 +32,14 @@ toolchain(
     exec_compatible_with = [%{PLATFORM_CONSTRAINT}],
 )
 
-alias(name = "python_headers",
-      actual = "@python//:python_headers")
+py_library(
+    name = "python_headers",
+    hdrs = glob(["include/python%{PYTHON_VERSION}/**/*.h"]),
+    includes = ["include/python%{PYTHON_VERSION}"],
+    deps = [
+        "@com_google_protobuf//:protobuf_python",
+    ],
+)
 
 # This alias is exists for the use of targets in the @llvm-project dependency,
 # which expect a python_headers target called @python_runtime//:headers. We use

@@ -1,6 +1,5 @@
 """Hermetic Python initialization. Consult the WORKSPACE on how to use it."""
 
-load("@python//:defs.bzl", "interpreter")
 load("@python_version_repo//:py_version.bzl", "REQUIREMENTS_WITH_LOCAL_WHEELS")
 load("@rules_python//python:pip.bzl", "package_annotation", "pip_parse")
 
@@ -29,6 +28,13 @@ cc_library(
     pip_parse(
         name = "pypi",
         annotations = numpy_annotations,
-        python_interpreter_target = interpreter,
+        python_interpreter_target = "@python_3_13_host//:python",
         requirements_lock = REQUIREMENTS_WITH_LOCAL_WHEELS,
+        extra_pip_args = ["--extra-index-url", "https://pypi.org/simple"],
     )
+
+#pip_parse(
+#    name = "third_party",
+#    requirements_lock = "//:requirements.txt",
+#    python_interpreter_target = "@python_3_13_host//:python",
+#)

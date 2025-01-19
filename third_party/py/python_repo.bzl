@@ -1,12 +1,12 @@
 """
 Repository rule to manage hermetic Python interpreter under Bazel.
 
-Version can be set via build parameter "--repo_env=HERMETIC_PYTHON_VERSION=3.11"
+Version can be set via build parameter "--repo_env=HERMETIC_PYTHON_VERSION=3.13"
 
 To set wheel name, add "--repo_env=WHEEL_NAME=tensorflow_cpu"
 """
 
-DEFAULT_VERSION = "3.11"
+DEFAULT_VERSION = "3.13"
 
 def _python_repository_impl(ctx):
     version = _get_python_version(ctx)
@@ -14,6 +14,9 @@ def _python_repository_impl(ctx):
     ctx.file("BUILD", "")
     wheel_name = ctx.os.environ.get("WHEEL_NAME", "tensorflow")
     wheel_collab = ctx.os.environ.get("WHEEL_COLLAB", False)
+    output_path = ctx.os.environ.get("OUTPUT_PATH", "/tf/pkg")
+    python_bin = ctx.os.environ.get("PYTHON_BIN_PATH", "python")
+    python_lib = ctx.os.environ.get("PYTHON_LIB_PATH", "/usr/lib/python3.13/site-packages")
 
     requirements = None
     for i in range(0, len(ctx.attr.requirements_locks)):
@@ -60,15 +63,31 @@ TF_PYTHON_VERSION = "{version}"
 HERMETIC_PYTHON_VERSION = "{version}"
 WHEEL_NAME = "{wheel_name}"
 WHEEL_COLLAB = "{wheel_collab}"
+OUTPUT_PATH = "{output_path}"
+PYTHON_BIN_PATH = "{python_bin}"
+PYTHON_LIB_PATH = "{python_lib}"
 REQUIREMENTS = "{requirements}"
 REQUIREMENTS_WITH_LOCAL_WHEELS = "{requirements_with_local_wheels}"
 """.format(
             version = version,
             wheel_name = wheel_name,
             wheel_collab = wheel_collab,
+            output_path = output_path,
+            python_bin = python_bin,
+            python_lib = python_lib,
             requirements = str(requirements),
             requirements_with_local_wheels = requirements_with_local_wheels,
         ),
+    )
+
+    ctx.template(
+        "BUILD",
+        Label("//third_party/py:BUILD.tpl"),
+        substitutions = {
+            "%{PROTOBUF_VERSION}": "29.3",
+            "%{PYTHON_BIN_PATH}": python_bin,
+            "%{PYTHON_LIB_PATH}": python_lib,
+        },
     )
 
 def _get_python_version(ctx):

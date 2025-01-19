@@ -1,12 +1,12 @@
 """
 Repository rule to manage hermetic Python interpreter under Bazel.
 
-Version can be set via build parameter "--repo_env=HERMETIC_PYTHON_VERSION=3.11"
+Version can be set via build parameter "--repo_env=HERMETIC_PYTHON_VERSION=3.13"
 
-To set wheel name, add "--repo_env=WHEEL_NAME=tensorflow_cpu"
+To set wheel name, add "--repo_env=WHEEL_NAME=tensorflow_rocm"
 """
 
-DEFAULT_VERSION = "3.11"
+DEFAULT_VERSION = "3.13"
 
 def _python_repository_impl(ctx):
     version = _get_python_version(ctx)

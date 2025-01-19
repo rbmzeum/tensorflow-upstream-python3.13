@@ -3,13 +3,30 @@
 set -e
 set -o pipefail
 
-if [ -z "$PYTHON_BIN_PATH" ]; then
-  PYTHON_BIN_PATH=$(which python3 || which python || true)
+# Проверяем наличие Python
+if [ "${PYTHON_BIN}" = "" ]; then
+  PYTHON_BIN="python3"
+  # Приоритет версий Python
+  for PYTHON_VER in "3.13" "3.12" "3.11" "3.10" "3.9"; do
+    which "python${PYTHON_VER}" > /dev/null 2>&1
+    if [ $? -eq 0 ]; then
+      PYTHON_BIN="python${PYTHON_VER}"
+      break
+    fi
+  done
 fi
 
-# Set all env variables
+# Проверяем зависимости Python
+"$PYTHON_BIN" -c "import numpy" >/dev/null 2>&1 || { echo "numpy не установлен"; exit 1; }
+"$PYTHON_BIN" -c "import keras_preprocessing" >/dev/null 2>&1 || { echo "keras_preprocessing не установлен"; exit 1; }
+
+# Устанавливаем переменные окружения
+export PYTHON_BIN_PATH="$PYTHON_BIN"
+export PYTHON_LIB_PATH=$("$PYTHON_BIN" -c 'import site; print(site.getsitepackages()[0])')
+
+# Запускаем конфигурацию
 CONFIGURE_DIR=$(dirname "$0")
-"$PYTHON_BIN_PATH" "${CONFIGURE_DIR}/configure.py" "$@"
+"$PYTHON_BIN" "${CONFIGURE_DIR}/configure.py" "$@"
 
 echo "Configuration finished"
 

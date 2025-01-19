@@ -23,6 +23,9 @@ Should be set via --repo_env=WHEEL_NAME=tensorflow_cpu.
 6) `--xla_aot` - paths to files that should be in xla_aot directory. 
 """
 
+# DEBUG
+#OUTPUT_PATH=/home/vs/Projects/ml/tf/downloads/sources/build
+
 load("@python_version_repo//:py_version.bzl", "WHEEL_COLLAB", "WHEEL_NAME", "OUTPUT_PATH")
 load("@bazel_skylib//rules:common_settings.bzl", "BuildSettingInfo")
 load("//tensorflow:tensorflow.bzl", "VERSION")

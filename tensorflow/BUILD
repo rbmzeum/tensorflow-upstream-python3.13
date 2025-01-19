@@ -1734,8 +1734,8 @@ py_library(
         "//tensorflow/lite/python:lite",
         "//tensorflow/lite/python/authoring",
         "//tensorflow/python:no_contrib",
-        "@pypi_keras//:pkg",
-        "@pypi_tensorboard//:pkg",
+        # "@pypi_keras//:pkg",
+        # "@pypi_tensorboard//:pkg",
     ],
 )
 # copybara:comment_end

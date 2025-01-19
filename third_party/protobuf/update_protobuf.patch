@@ -1,0 +1,29 @@
+diff --git a/tensorflow/tsl/platform/default/build_config.bzl b/tensorflow/tsl/platform/default/build_config.bzl
+--- a/tensorflow/tsl/platform/default/build_config.bzl
++++ b/tensorflow/tsl/platform/default/build_config.bzl
+@@ -1,7 +1,7 @@
+ """Build configurations for TSL."""
+ 
+ load("@com_google_protobuf//:protobuf.bzl",
+-    "proto_gen")
++    "_proto_gen as proto_gen")
+ 
+ def tsl_proto_library(
+         name,
+@@ -14,7 +14,7 @@ def tsl_proto_library(
+     """Generate proto library rules."""
+     _ignore = [has_services]
+ 
+-    native.proto_library(
++    proto_library(
+         name = name + "_proto",
+         srcs = srcs,
+         deps = deps,
+         visibility = visibility,
+     )
+ 
+     cc_proto_library(
+         name = name,
+         deps = [":" + name + "_proto"],
+         visibility = visibility,
+     )
